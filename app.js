@@ -103,7 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
         escala: "C",
         campo: "C",
         shape: "C",
-        chord: "C"
+        chord: "C",
+        prog: "C"
     };
 
     function createNoteSelector(containerId, stateKey, callback) {
@@ -202,7 +203,118 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Event Listeners for Selects (removed root note since it is handled by buttons)
+    // --- PROGRESSIONS LOGIC ---
+    const progressionsDB = [
+        { name: "Progressão Pop (Axis)", numerals: ["I", "V", "vi", "IV"], description: "A progressão mais famosa da música pop. Presente em sucessos como 'Let It Be' e 'Don't Stop Believin'." },
+        { name: "Doo-Wop (Anos 50)", numerals: ["I", "vi", "IV", "V"], description: "Clássica do Rock and Roll dos anos 50 e baladas românticas." },
+        { name: "Jazz Base (ii-V-I)", numerals: ["ii", "V", "I"], description: "A fundação da harmonia do Jazz, cria forte tensão e resolução." },
+        { name: "Andalusa (Flamenco)", numerals: ["vi", "V", "IV", "III"], description: "Progressão descendente característica da música flamenca e espanhola (aqui descrita em relação ao tom Maior)." },
+        { name: "Empréstimo e Substituto", numerals: ["IV", "iii", "vi", "v", "I"], description: "Progressão rica que usa o 'v' menor (empréstimo mixolídio) criando tensão melancólica antes de resolver." },
+        { name: "I - bVII - IV (Rock)", numerals: ["I", "bVII", "IV"], description: "Sonoridade típica do Classic Rock usando o bVII do modo Mixolídio." },
+    ];
+
+    function resolveRomanNumeral(root, numeral, keyType) {
+        // keyType: "Maior" or "Menor"
+        // Base structure relies on Major scale intervals:
+        // I, ii, iii, IV, V, vi, vii°
+        // If keyType is Menor, the relative root is 3 semitones up, but it's easier to just compute from the selected root treating it as I.
+        // Wait, if user selects "Am" as Menor, we treat A as the root.
+        // To parse numeral:
+        let isMinor = numeral === numeral.toLowerCase() && !numeral.includes("°");
+        let isDim = numeral.includes("°");
+        let hasFlat = numeral.startsWith("b");
+        let hasSharp = numeral.startsWith("#");
+        
+        let baseNumeral = numeral.replace(/b|#|°|7|m|maj/g, "").toUpperCase();
+        
+        const romanToInt = { "I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7 };
+        let degree = romanToInt[baseNumeral];
+        
+        // Major scale intervals from root (1 to 7)
+        const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+        
+        let semitonesFromRoot = majorIntervals[degree - 1];
+        if (hasFlat) semitonesFromRoot -= 1;
+        if (hasSharp) semitonesFromRoot += 1;
+        
+        // If the key itself is Minor, the root is treated as "i" usually.
+        // But in our UI, if the user selects Key: C Minor, and we ask for "vi", in a minor key "vi" usually means the 6th degree of minor (which is Ab).
+        // It's much simpler to evaluate the Roman Numerals relative to the MAJOR parallel, OR to adjust if keyType="Menor".
+        // Often, Roman Numerals for minor keys are written relative to the minor scale (i, ii°, III, iv, v, VI, VII).
+        // Let's adjust intervals if keyType is "Menor":
+        const minorIntervals = [0, 2, 3, 5, 7, 8, 10]; // 1, 2, b3, 4, 5, b6, b7
+        
+        if (keyType === "Menor") {
+            semitonesFromRoot = minorIntervals[degree - 1];
+            if (hasFlat) semitonesFromRoot -= 1;
+            if (hasSharp) semitonesFromRoot += 1;
+        }
+        
+        // Calculate the chord root note
+        let rootIdx = notes.indexOf(root);
+        let chordRootIdx = (rootIdx + semitonesFromRoot + 12) % 12;
+        let chordRootNote = notes[chordRootIdx];
+        
+        // Quality
+        let quality = "";
+        if (isMinor) quality = "m";
+        if (isDim) quality = "dim";
+        
+        // Extensions
+        if (numeral.includes("maj7")) quality += "maj7";
+        else if (numeral.includes("m7")) {
+            if (!quality.includes("m")) quality = "m7";
+            else quality += "7";
+        }
+        else if (numeral.includes("7")) quality += "7";
+        
+        return chordRootNote + quality;
+    }
+
+    function renderProgressions() {
+        const root = activeState.prog;
+        const keyTypeSelect = document.getElementById("key-type-prog");
+        if (!keyTypeSelect) return;
+        const keyType = keyTypeSelect.value;
+        
+        const container = document.getElementById("progressoes-results");
+        container.innerHTML = "";
+
+        progressionsDB.forEach(prog => {
+            const card = document.createElement("div");
+            card.className = "progression-card";
+            
+            card.innerHTML = `
+                <h4>${prog.name}</h4>
+                <p>${prog.description}</p>
+            `;
+            
+            const chordsRow = document.createElement("div");
+            chordsRow.className = "progression-chords";
+            
+            prog.numerals.forEach(numeral => {
+                const chordName = resolveRomanNumeral(root, numeral, keyType);
+                
+                const box = document.createElement("div");
+                box.className = "progression-chord-box";
+                
+                box.innerHTML = `
+                    <span class="numeral">${numeral}</span>
+                    <span class="chord-name">${chordName}</span>
+                `;
+                chordsRow.appendChild(box);
+            });
+            
+            card.appendChild(chordsRow);
+            container.appendChild(card);
+        });
+    }
+
+    createNoteSelector("root-note-prog", "prog", renderProgressions);
+    const keyTypeProgSelect = document.getElementById("key-type-prog");
+    if (keyTypeProgSelect) {
+        keyTypeProgSelect.addEventListener("change", renderProgressions);
+    }
 
     // --- SHAPES LOGIC ---
     createNoteSelector("root-note-shape", "shape", renderFretboard);
@@ -266,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderScales();
     renderHarmonicFields();
     renderFretboard();
+    renderProgressions();
 
     // --- CHORDS TAB LOGIC ---
 

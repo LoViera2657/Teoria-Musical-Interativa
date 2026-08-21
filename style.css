@@ -232,6 +232,62 @@ select:hover {
     border-color: var(--accent);
 }
 
+/* Progression Styles */
+.progression-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.progression-card h4 {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+}
+
+.progression-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.progression-chords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.progression-chord-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    text-align: center;
+    min-width: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.progression-chord-box .numeral {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.progression-chord-box .chord-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
 /* Note Selectors (Bolinhas) */
 .note-selector {
     display: flex;
