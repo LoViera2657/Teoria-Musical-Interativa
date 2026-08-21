@@ -403,3 +403,185 @@ select:focus, select:hover {
     background-color: var(--success);
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
+
+/* Acordes Section Specifics */
+.mode-toggle {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background-color: var(--bg-card);
+    padding: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+}
+
+.mode-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mode-toggle button:hover {
+    color: var(--text-main);
+}
+
+.mode-toggle button.active {
+    background-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+}
+
+/* Interactive Fretboard */
+.interactive .fret:not(:first-child) {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.interactive .fret:not(:first-child):hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Mute/Open string control on nut (first fret) */
+.string-control {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+    z-index: 2;
+    background-color: var(--bg-card);
+}
+
+.string-control:hover {
+    color: var(--text-main);
+}
+
+.string-control.muted {
+    color: #ef4444; /* Red X */
+}
+
+.string-control.open {
+    color: var(--success); /* Green O */
+}
+
+.chord-dict-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.chord-dict-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.chord-dict-box h4 {
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.chord-dict-box .chord-fret-start {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Vertical Diagram */
+.diagram-container {
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+}
+
+.diagram-nut-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.diagram-nut-controls span {
+    width: 14px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.diagram-nut-controls span.muted { color: #ef4444; }
+.diagram-nut-controls span.open { color: var(--success); }
+
+.diagram-grid {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--text-main); /* Nut */
+    background: rgba(0,0,0,0.2);
+}
+
+.diagram-fret {
+    display: flex;
+    justify-content: space-between;
+    height: 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+}
+
+.diagram-fret:last-child {
+    border-bottom: none;
+}
+
+.diagram-string {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* Perfect vertical lines for each string */
+.diagram-string::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    width: 1px;
+    background-color: var(--border);
+    transform: translateX(-50%);
+    z-index: -1;
+}
+
+.diagram-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background: var(--text-main);
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    z-index: 2;
+}
+
+.diagram-marker.root {
+    background: var(--success);
+}
