@@ -210,7 +210,13 @@ document.addEventListener("DOMContentLoaded", () => {
         { name: "Jazz Base (ii-V-I)", numerals: ["ii", "V", "I"], description: "A fundação da harmonia do Jazz, cria forte tensão e resolução." },
         { name: "Andalusa (Flamenco)", numerals: ["vi", "V", "IV", "III"], description: "Progressão descendente característica da música flamenca e espanhola (aqui descrita em relação ao tom Maior)." },
         { name: "Empréstimo e Substituto", numerals: ["IV", "iii", "vi", "v", "I"], description: "Progressão rica que usa o 'v' menor (empréstimo mixolídio) criando tensão melancólica antes de resolver." },
-        { name: "I - bVII - IV (Rock)", numerals: ["I", "bVII", "IV"], description: "Sonoridade típica do Classic Rock usando o bVII do modo Mixolídio." },
+        { name: "Classic Rock", numerals: ["I", "bVII", "IV"], description: "Sonoridade típica do Classic Rock usando o bVII do modo Mixolídio (ex: Sweet Home Alabama)." },
+        { name: "Estradas Reais (Royal Road / J-Pop)", numerals: ["IVmaj7", "V7", "iii", "vi"], description: "A 'Oudo Shinko' ou Estrada Real. Progressão onipresente em Anime Songs e música japonesa, carrega um sentimento nostálgico e épico." },
+        { name: "Épica Melancólica (Estilo 'Creep')", numerals: ["I", "III7", "IV", "iv"], description: "Usa o acorde maior do III grau (dominante secundária) e finaliza com o iv (empréstimo modal menor), criando um som denso e triste." },
+        { name: "Cadência Nintendo (Heróica)", numerals: ["bVI", "bVII", "I"], description: "Super comum em trilhas de videogame (como Mario ou Zelda). Usa acordes 'emprestados' da escala menor para criar um final triunfante." },
+        { name: "Canon de Pachelbel", numerals: ["I", "V", "vi", "iii", "IV", "I", "IV", "V"], description: "Uma progressão erudita do século 17 que provou ser tão eficiente que é reciclada até hoje na música Pop." },
+        { name: "Cadência Plagal Menor (Magia)", numerals: ["I", "IV", "iv", "I"], description: "A famosa mudança do acorde Maior para o Menor (IV - iv). Cria uma sensação mágica, doce e melancólica, muito usada por John Williams, Disney e Beatles." },
+        { name: "R&B / Neo-Soul Sofisticado", numerals: ["ii7", "V7", "iii7", "vi7"], description: "Uma cadeia de acordes com sétima menor. O iii7 atuando no lugar do I grau cria um balanço contínuo sem repouso definitivo." }
     ];
 
     function resolveRomanNumeral(root, numeral, keyType) {
