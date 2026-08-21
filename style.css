@@ -232,6 +232,44 @@ select:hover {
     border-color: var(--accent);
 }
 
+/* Note Selectors (Bolinhas) */
+.note-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.note-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.note-btn:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.note-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-hover);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+    transform: scale(1.1);
+}
+
 /* Results Container */
 .results-container {
     display: flex;
@@ -509,6 +547,29 @@ select:hover {
 
 .mode-toggle button:hover {
     color: var(--text-main);
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4), 0 2px 4px -1px rgba(99, 102, 241, 0.2);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5), 0 4px 6px -2px rgba(99, 102, 241, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .mode-toggle button.active {

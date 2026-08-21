@@ -99,24 +99,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Populate Selects
-    const selectEscala = document.getElementById("root-note-escala");
-    const selectCampo = document.getElementById("root-note-campo");
+    let activeState = {
+        escala: "C",
+        campo: "C",
+        shape: "C",
+        chord: "C"
+    };
 
-    notes.forEach(note => {
-        let opt1 = document.createElement("option");
-        opt1.value = note;
-        opt1.textContent = note;
-        selectEscala.appendChild(opt1);
+    function createNoteSelector(containerId, stateKey, callback) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        notes.forEach(note => {
+            const btn = document.createElement("button");
+            btn.className = "note-btn";
+            if (note === "C") btn.classList.add("active");
+            btn.textContent = note;
+            btn.onclick = () => {
+                container.querySelectorAll('.note-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeState[stateKey] = note;
+                callback();
+            };
+            container.appendChild(btn);
+        });
+    }
 
-        let opt2 = document.createElement("option");
-        opt2.value = note;
-        opt2.textContent = note;
-        selectCampo.appendChild(opt2);
-    });
+    createNoteSelector("root-note-escala", "escala", renderScales);
+    createNoteSelector("root-note-campo", "campo", renderHarmonicFields);
 
     // Render Functions
     function renderScales() {
-        const root = selectEscala.value;
+        const root = activeState.escala;
         const container = document.getElementById("escalas-results");
         container.innerHTML = "";
 
@@ -152,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderHarmonicFields() {
-        const root = selectCampo.value;
+        const root = activeState.campo;
         const container = document.getElementById("campos-results");
         container.innerHTML = "";
 
@@ -189,22 +202,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Event Listeners for Selects
-    selectEscala.addEventListener("change", renderScales);
-    selectCampo.addEventListener("change", renderHarmonicFields);
+    // Event Listeners for Selects (removed root note since it is handled by buttons)
 
     // --- SHAPES LOGIC ---
-    const selectShapeRoot = document.getElementById("root-note-shape");
+    createNoteSelector("root-note-shape", "shape", renderFretboard);
     const selectShapeScale = document.getElementById("scale-type-shape");
     const fretboardContainer = document.getElementById("fretboard");
-
-    // Populate shape root select
-    notes.forEach(note => {
-        let opt = document.createElement("option");
-        opt.value = note;
-        opt.textContent = note;
-        selectShapeRoot.appendChild(opt);
-    });
 
     // Populate shape scale select
     Object.keys(formulas).forEach(scaleName => {
@@ -218,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const numFrets = 15; // 0 (nut) to 14
 
     function renderFretboard() {
-        const root = selectShapeRoot.value;
+        const root = activeState.shape;
         const scaleType = selectShapeScale.value;
 
         const scaleNotes = generateScale(root, formulas[scaleType]);
@@ -256,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fretboardContainer.appendChild(board);
     }
 
-    selectShapeRoot.addEventListener("change", renderFretboard);
+    // (selectShapeRoot is handled by buttons)
     selectShapeScale.addEventListener("change", renderFretboard);
 
     // Initial Render
@@ -287,13 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- DICTIONARY MODE ---
-    const chordRootSelect = document.getElementById("chord-root");
-    notes.forEach(note => {
-        let opt = document.createElement("option");
-        opt.value = note;
-        opt.textContent = note;
-        chordRootSelect.appendChild(opt);
-    });
+    createNoteSelector("chord-root", "chord", renderChordDictionary);
 
     const movableShapesDB = [
         // MAIOR
@@ -343,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     function renderChordDictionary() {
-        const root = chordRootSelect.value;
+        const root = activeState.chord;
         const container = document.getElementById("chord-dict-results");
         container.innerHTML = "";
 
@@ -470,8 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    chordRootSelect.addEventListener("change", renderChordDictionary);
-
+    // (chordRootSelect handled by buttons)
     // --- IDENTIFIER MODE (Reverse Finder) ---
     let identState = ["X", "X", "X", "X", "X", "X"];
 
