@@ -386,7 +386,100 @@ const academyModules = [
             }
         ]
     },
-    { id: "m6", title: "Módulo 6 — Campo harmônico", status: "locked", description: "Em breve." },
+    {
+        id: "m6",
+        title: "Módulo 6 — Campo Harmônico",
+        status: "available",
+        description: "Aprenda como a escala dá origem a uma família de acordes e como prever a harmonia de uma música.",
+        lessons: [
+            {
+                id: "l6_1",
+                title: "6.1 A Família de Acordes (Cores)",
+                content: `
+                    <p>Imagine que uma escala (como Dó Maior) seja uma paleta de 7 cores primárias. O <strong>Campo Harmônico</strong> é o conjunto de combinações que você pode fazer misturando <em>apenas</em> essas 7 cores, sem adicionar nenhuma tinta de fora.</p>
+                    <p>Em termos musicais: assim como as notas formam uma escala, os acordes formados exclusivamente com as notas dessa escala formam a "família de acordes" daquela tonalidade.</p>
+                    <p>Tocar fora do campo harmônico é como usar uma cor neon no meio de uma pintura em tons pastéis — chama muita atenção (o que pode ser bom ou ruim, dependendo da sua intenção!).</p>
+                    <div style="margin-top: 20px; padding: 15px; background: var(--bg-surface); border-radius: 8px; text-align: center;">
+                        <p style="margin-bottom: 10px;">Experimente ver essas "famílias" na aba de Campos Harmônicos!</p>
+                        <button class="btn btn-primary" onclick="goToAppTab('campos')">Ir para Campos Harmônicos</button>
+                    </div>
+                `,
+                quiz: {
+                    question: "Usando a analogia das cores, o que define um Campo Harmônico?",
+                    options: [
+                        "Usar todas as 12 cores disponíveis no instrumento.",
+                        "Um conjunto de acordes criados misturando apenas as 'cores' (notas) de uma escala específica.",
+                        "Usar apenas as cores quentes (acordes maiores).",
+                        "Misturar escalas diferentes para criar novos acordes."
+                    ],
+                    correctIndex: 1,
+                    feedbackCorrect: "Exatamente! O Campo Harmônico nasce quando construímos acordes usando estritamente as notas de uma única escala (nossa paleta base).",
+                    feedbackWrong: "Incorreto. Lembre-se que o Campo Harmônico é restrito às notas da escala que o originou."
+                }
+            },
+            {
+                id: "l6_2",
+                title: "6.2 A Regra de Ouro do Campo Maior",
+                content: `
+                    <p>Como construímos essa família? Simples: pegamos cada nota da escala e empilhamos terças em cima dela (lembra da aula de formação de tríades?).</p>
+                    <p>Se fizermos isso com a Escala Maior (qualquer uma delas!), o resultado das qualidades dos acordes (Maior, Menor ou Diminuto) será <strong>sempre o mesmo</strong>. Essa é a regra universal do Campo Harmônico Maior:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>I</strong> (Maior)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>ii</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>iii</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>IV</strong> (Maior)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>V</strong> (Maior)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>vi</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>vii°</strong> (diminuto)</span>
+                    </div>
+                    <p>Exemplo em Dó (C): <strong>C, Dm, Em, F, G, Am, Bdim</strong>. <br>Se você souber essa regra (Maior, menor, menor, Maior, Maior, menor, diminuto), você tira de ouvido qualquer música Pop/Rock diatônica!</p>
+                `,
+                quiz: {
+                    question: "Na regra universal do Campo Harmônico Maior, quais graus são sempre acordes MENORES?",
+                    options: [
+                        "I, IV e V",
+                        "II, III e VI (ii, iii, vi)",
+                        "Apenas o VII (vii°)",
+                        "I, II e III (I, ii, iii)"
+                    ],
+                    correctIndex: 1,
+                    feedbackCorrect: "Perfeito! Os graus 2, 3 e 6 de um Campo Maior sempre serão acordes menores.",
+                    feedbackWrong: "Incorreto. Lembre-se: os graus I, IV e V são maiores. O VII é diminuto."
+                }
+            },
+            {
+                id: "l6_3",
+                title: "6.3 O Lado Sombrio: Campo Menor",
+                content: `
+                    <p>Lembra da aula sobre a Escala Relativa Menor? Que ela usa as <strong>mesmas exatas notas</strong> da Maior, só que começando do Grau VI?</p>
+                    <p>A mesma mágica acontece com o Campo Harmônico! O <strong>Campo Harmônico Menor Natural</strong> possui os exatos mesmos acordes do seu relativo maior, ele só muda o ponto de partida (o centro de gravidade).</p>
+                    <p>A regra do Menor Natural fica assim (é a regra do maior deslocada):</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>i</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>ii°</strong> (diminuto)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>III</strong> (Maior)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>iv</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>v</strong> (menor)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>VI</strong> (Maior)</span>
+                        <span style="background:var(--bg-surface); padding:8px 12px; border-radius:6px;"><strong>VII</strong> (Maior)</span>
+                    </div>
+                    <p>O Campo de <strong>Am</strong> (relativo de C) tem os acordes: <strong>Am, Bdim, C, Dm, Em, F, G</strong>.</p>
+                `,
+                quiz: {
+                    question: "O Campo Harmônico de Lá Menor (Am) possui os exatos mesmos acordes do Campo Harmônico de qual tom Maior?",
+                    options: [
+                        "Sol Maior (G)",
+                        "Fá Maior (F)",
+                        "Dó Maior (C)",
+                        "Lá Maior (A)"
+                    ],
+                    correctIndex: 2,
+                    feedbackCorrect: "Bingo! Am é o relativo menor de C. Eles compartilham as mesmas notas e a mesma família de acordes.",
+                    feedbackWrong: "Incorreto. Você deve encontrar o relativo maior (1 tom e meio acima do tom menor)."
+                }
+            }
+        ]
+    },
     { id: "m7", title: "Módulo 7 — Funções harmônicas", status: "locked", description: "Em breve." },
     { id: "m8", title: "Módulo 8 — Progressões e lógica harmônica", status: "locked", description: "Em breve." },
     { id: "m9", title: "Módulo 9 — Ciclo das Quintas", status: "locked", description: "Em breve." },
