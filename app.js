@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let hasFlat = numeral.startsWith("b");
         let hasSharp = numeral.startsWith("#");
         
-        let baseNumeral = numeral.replace(/b|#|°|7|m|maj/g, "").toUpperCase();
+        let baseNumeral = numeral.replace(/[^IV]/gi, "").toUpperCase();
         
         const romanToInt = { "I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7 };
         let degree = romanToInt[baseNumeral];
