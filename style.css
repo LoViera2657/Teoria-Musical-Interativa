@@ -5,7 +5,8 @@
     --bg-card: #232730;
     --text-main: #e2e8f0;
     --text-muted: #94a3b8;
-    --accent: #6366f1; /* Indigo */
+    --accent: #6366f1;
+    /* Indigo */
     --accent-hover: #818cf8;
     --border: #334155;
     --success: #10b981;
@@ -103,8 +104,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header {
@@ -173,7 +181,7 @@ header p {
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--text-main);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .interval-list {
@@ -185,6 +193,7 @@ header p {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border);
 }
+
 .interval-list li:last-child {
     border-bottom: none;
 }
@@ -218,7 +227,8 @@ select {
     transition: var(--transition);
 }
 
-select:focus, select:hover {
+select:focus,
+select:hover {
     border-color: var(--accent);
 }
 
@@ -229,7 +239,8 @@ select:focus, select:hover {
     gap: 2rem;
 }
 
-.scale-group, .field-group {
+.scale-group,
+.field-group {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -237,7 +248,8 @@ select:focus, select:hover {
     box-shadow: var(--card-shadow);
 }
 
-.scale-group h4, .field-group h4 {
+.scale-group h4,
+.field-group h4 {
     color: var(--accent-hover);
     margin-bottom: 1.5rem;
     font-size: 1.2rem;
@@ -245,13 +257,15 @@ select:focus, select:hover {
     padding-bottom: 0.5rem;
 }
 
-.notes-row, .chords-row {
+.notes-row,
+.chords-row {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 }
 
-.note-box, .chord-box {
+.note-box,
+.chord-box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -272,7 +286,8 @@ select:focus, select:hover {
     width: 80px;
 }
 
-.note-box:hover, .chord-box:hover {
+.note-box:hover,
+.chord-box:hover {
     background-color: var(--accent);
     border-color: var(--accent-hover);
     transform: scale(1.05);
@@ -312,18 +327,65 @@ select:focus, select:hover {
 }
 
 /* Positions for Circle of Fifths */
-.c { top: 0%; left: 50%; }
-.g { top: 6.7%; left: 75%; }
-.d { top: 25%; left: 93.3%; }
-.a { top: 50%; left: 100%; }
-.e { top: 75%; left: 93.3%; }
-.b { top: 93.3%; left: 75%; }
-.fs { top: 100%; left: 50%; }
-.cs { top: 93.3%; left: 25%; }
-.af { top: 75%; left: 6.7%; }
-.ef { top: 50%; left: 0%; }
-.bf { top: 25%; left: 6.7%; }
-.f { top: 6.7%; left: 25%; }
+.c {
+    top: 0%;
+    left: 50%;
+}
+
+.g {
+    top: 6.7%;
+    left: 75%;
+}
+
+.d {
+    top: 25%;
+    left: 93.3%;
+}
+
+.a {
+    top: 50%;
+    left: 100%;
+}
+
+.e {
+    top: 75%;
+    left: 93.3%;
+}
+
+.b {
+    top: 93.3%;
+    left: 75%;
+}
+
+.fs {
+    top: 100%;
+    left: 50%;
+}
+
+.cs {
+    top: 93.3%;
+    left: 25%;
+}
+
+.af {
+    top: 75%;
+    left: 6.7%;
+}
+
+.ef {
+    top: 50%;
+    left: 0%;
+}
+
+.bf {
+    top: 25%;
+    left: 6.7%;
+}
+
+.f {
+    top: 6.7%;
+    left: 25%;
+}
 
 /* Fretboard Visualization */
 .fretboard-container {
@@ -363,10 +425,26 @@ select:focus, select:hover {
     z-index: 1;
 }
 
-.string:nth-child(1)::before { height: 1px; } /* High E */
-.string:nth-child(2)::before { height: 1px; } /* B */
-.string:nth-child(5)::before { height: 3px; } /* A */
-.string:nth-child(6)::before { height: 4px; } /* Low E */
+.string:nth-child(1)::before {
+    height: 1px;
+}
+
+/* High E */
+.string:nth-child(2)::before {
+    height: 1px;
+}
+
+/* B */
+.string:nth-child(5)::before {
+    height: 3px;
+}
+
+/* A */
+.string:nth-child(6)::before {
+    height: 4px;
+}
+
+/* Low E */
 
 .fret {
     flex: 1;
@@ -379,7 +457,8 @@ select:focus, select:hover {
 }
 
 .fret:first-child {
-    border-right: 4px solid #ddd; /* Nut */
+    border-right: 4px solid #ddd;
+    /* Nut */
     flex: 0.5;
 }
 
@@ -469,11 +548,13 @@ select:focus, select:hover {
 }
 
 .string-control.muted {
-    color: #ef4444; /* Red X */
+    color: #ef4444;
+    /* Red X */
 }
 
 .string-control.open {
-    color: var(--success); /* Green O */
+    color: var(--success);
+    /* Green O */
 }
 
 .chord-dict-grid {
@@ -526,15 +607,21 @@ select:focus, select:hover {
     font-weight: 700;
 }
 
-.diagram-nut-controls span.muted { color: #ef4444; }
-.diagram-nut-controls span.open { color: var(--success); }
+.diagram-nut-controls span.muted {
+    color: #ef4444;
+}
+
+.diagram-nut-controls span.open {
+    color: var(--success);
+}
 
 .diagram-grid {
     display: flex;
     flex-direction: column;
     border: 2px solid var(--border);
-    border-top: 4px solid var(--text-main); /* Nut */
-    background: rgba(0,0,0,0.2);
+    border-top: 4px solid var(--text-main);
+    /* Nut */
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .diagram-fret {
@@ -562,7 +649,9 @@ select:focus, select:hover {
 .diagram-string::before {
     content: '';
     position: absolute;
-    top: 0; bottom: 0; left: 50%;
+    top: 0;
+    bottom: 0;
+    left: 50%;
     width: 1px;
     background-color: var(--border);
     transform: translateX(-50%);
@@ -578,10 +667,143 @@ select:focus, select:hover {
     height: 14px;
     background: var(--text-main);
     border-radius: 50%;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     z-index: 2;
 }
 
 .diagram-marker.root {
     background: var(--success);
+}
+
+/* -----------------------------
+ * ACADEMY STYLES
+ * ----------------------------- */
+
+.academy-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 20px;
+}
+
+.academy-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.academy-card.locked {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(80%);
+}
+
+.academy-card h3 {
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.academy-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.btn-back {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+.lesson-content h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.lesson-text h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+}
+
+.lesson-text p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+.theory-highlight {
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 4px solid var(--accent);
+    padding: 15px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+}
+
+.quiz-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 40px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-container h3 {
+    margin-bottom: 15px;
+    color: #f1c40f; /* Gold for quiz */
+}
+
+.quiz-question {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-quiz-option {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 15px;
+    text-align: left;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-quiz-option:hover:not(:disabled) {
+    background: var(--border);
+}
+
+.btn-quiz-option.selected {
+    border-color: var(--primary-color);
+}
+
+.btn-quiz-option.correct {
+    background: rgba(46, 204, 113, 0.1);
+    border-color: #2ecc71;
+    color: #2ecc71;
+}
+
+.btn-quiz-option.wrong {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
+    color: #e74c3c;
 }

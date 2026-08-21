@@ -33,7 +33,7 @@ const degrees = ["I", "II", "III", "IV", "V", "VI", "VII"];
 function getNote(root, semitones) {
     let rootIndex = notes.indexOf(root);
     if (rootIndex === -1) return "?";
-    
+
     let targetIndex = (rootIndex + semitones) % 12;
     return notes[targetIndex];
 }
@@ -44,7 +44,7 @@ function getNote(root, semitones) {
 function generateScale(root, formula) {
     let scale = [root];
     let currentSemitones = 0;
-    
+
     // We only iterate up to formula.length - 1 to get 7 notes for heptatonic (last interval completes octave)
     for (let i = 0; i < formula.length - 1; i++) {
         currentSemitones += formula[i];
@@ -60,7 +60,7 @@ function generateScale(root, formula) {
 function generateHarmonicField(root, type) {
     const scale = generateScale(root, formulas[type]);
     const field = [];
-    
+
     if (type === "Maior") {
         // I, ii, iii, IV, V, vi, vii°
         const qualities = ["", "m", "m", "", "", "m", "dim"];
@@ -80,7 +80,7 @@ function generateHarmonicField(root, type) {
 // --- UI INTERACTION ---
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // Navigation
     const navLinks = document.querySelectorAll(".nav-links li");
     const sections = document.querySelectorAll(".section");
@@ -122,25 +122,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (const [name, formula] of Object.entries(formulas)) {
             const scaleNotes = generateScale(root, formula);
-            
+
             const groupDiv = document.createElement("div");
             groupDiv.className = "scale-group";
-            
+
             const title = document.createElement("h4");
             title.textContent = `Escala ${name}`;
             groupDiv.appendChild(title);
-            
+
             const notesRow = document.createElement("div");
             notesRow.className = "notes-row";
 
             scaleNotes.forEach((n, idx) => {
                 const noteBox = document.createElement("div");
                 noteBox.className = "note-box";
-                
+
                 const deg = document.createElement("span");
                 deg.className = "degree";
                 deg.textContent = idx + 1; // numeric degree
-                
+
                 noteBox.appendChild(deg);
                 noteBox.appendChild(document.createTextNode(n));
                 notesRow.appendChild(noteBox);
@@ -160,25 +160,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         types.forEach(type => {
             const field = generateHarmonicField(root, type);
-            
+
             const groupDiv = document.createElement("div");
             groupDiv.className = "field-group";
-            
+
             const title = document.createElement("h4");
             title.textContent = `Campo Harmônico ${type}`;
             groupDiv.appendChild(title);
-            
+
             const chordsRow = document.createElement("div");
             chordsRow.className = "chords-row";
 
             field.forEach((item) => {
                 const chordBox = document.createElement("div");
                 chordBox.className = "chord-box";
-                
+
                 const deg = document.createElement("span");
                 deg.className = "degree";
                 deg.textContent = item.degree;
-                
+
                 chordBox.appendChild(deg);
                 chordBox.appendChild(document.createTextNode(item.chord));
                 chordsRow.appendChild(chordBox);
@@ -220,23 +220,23 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderFretboard() {
         const root = selectShapeRoot.value;
         const scaleType = selectShapeScale.value;
-        
+
         const scaleNotes = generateScale(root, formulas[scaleType]);
-        
+
         fretboardContainer.innerHTML = "";
         const board = document.createElement("div");
         board.className = "fretboard";
-        
+
         guitarStrings.forEach(stringOpenNote => {
             const stringDiv = document.createElement("div");
             stringDiv.className = "string";
-            
+
             for (let fret = 0; fret <= numFrets; fret++) {
                 const fretDiv = document.createElement("div");
                 fretDiv.className = "fret";
-                
+
                 let noteAtFret = getNote(stringOpenNote, fret);
-                
+
                 if (scaleNotes.includes(noteAtFret)) {
                     const marker = document.createElement("div");
                     marker.className = "fret-marker";
@@ -246,13 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     marker.textContent = noteAtFret;
                     fretDiv.appendChild(marker);
                 }
-                
+
                 stringDiv.appendChild(fretDiv);
             }
-            
+
             board.appendChild(stringDiv);
         });
-        
+
         fretboardContainer.appendChild(board);
     }
 
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFretboard();
 
     // --- CHORDS TAB LOGIC ---
-    
+
     // Mode toggling
     const btnModeDict = document.getElementById("btn-mode-dict");
     const btnModeIdent = document.getElementById("btn-mode-ident");
@@ -296,38 +296,50 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const movableShapesDB = [
-        // CAGED System - MAIOR
-        { suffix: "", quality: "Maior", name: "Formato C", rootStr: 4, frets: [-3, -2, -3, -1, 0, "X"] },
-        { suffix: "", quality: "Maior", name: "Formato A", rootStr: 4, frets: [0, 2, 2, 2, 0, "X"] },
-        { suffix: "", quality: "Maior", name: "Formato G", rootStr: 5, frets: [0, 0, -3, -3, -1, 0] },
-        { suffix: "", quality: "Maior", name: "Formato E", rootStr: 5, frets: [0, 0, 1, 2, 2, 0] },
-        { suffix: "", quality: "Maior", name: "Formato D", rootStr: 3, frets: [2, 3, 2, 0, "X", "X"] },
+        // MAIOR
+        { suffix: "", quality: "Maior", name: "Formato E", rootStr: 0, frets: [0, 2, 2, 1, 0, 0] },
+        { suffix: "", quality: "Maior", name: "Formato A", rootStr: 1, frets: ["X", 0, 2, 2, 2, 0] },
+        { suffix: "", quality: "Maior", name: "Formato C", rootStr: 1, frets: ["X", 0, -1, -3, -2, -3] },
+        { suffix: "", quality: "Maior", name: "Formato G", rootStr: 0, frets: [0, -1, -3, -3, -3, 0] },
+        { suffix: "", quality: "Maior", name: "Formato D", rootStr: 2, frets: ["X", "X", 0, 2, 3, 2] },
 
         // MENOR
-        { suffix: "m", quality: "Menor", name: "Formato E", rootStr: 5, frets: [0, 0, 0, 2, 2, 0] },
-        { suffix: "m", quality: "Menor", name: "Formato A", rootStr: 4, frets: [0, 1, 2, 2, 0, "X"] },
-        { suffix: "m", quality: "Menor", name: "Formato D", rootStr: 3, frets: [1, 3, 2, 0, "X", "X"] },
+        { suffix: "m", quality: "Menor", name: "Formato Em", rootStr: 0, frets: [0, 2, 2, 0, 0, 0] },
+        { suffix: "m", quality: "Menor", name: "Formato Am", rootStr: 1, frets: ["X", 0, 2, 2, 1, 0] },
+        { suffix: "m", quality: "Menor", name: "Formato Dm", rootStr: 2, frets: ["X", "X", 0, 2, 3, 1] },
 
+        // INVERSÕES (Maior/3ª)
+        { suffix: "/3", quality: "Maior/Baixo na 3ª", name: "Formato C/E", rootStr: 1, frets: [-3, 0, -1, -3, -2, -3] },
+        { suffix: "/3", quality: "Maior/Baixo na 3ª", name: "Formato D/F#", rootStr: 2, frets: [2, 0, 0, 2, 3, 2] },
+        { suffix: "/3", quality: "Maior/Baixo na 3ª", name: "Formato G/B", rootStr: 3, frets: ["X", 2, 0, 0, 0, 3] },
+        { suffix: "/3", quality: "Maior/Baixo na 3ª", name: "Formato A/C#", rootStr: 3, frets: ["X", 2, 0, 0, 0, "X"] },
+
+        // INVERSÕES (Maior/5ª)
+        { suffix: "/5", quality: "Maior/Baixo na 5ª", name: "Formato E/B", rootStr: 0, frets: [2, 2, 2, 1, 0, 0] }, // E shape, root on 6th, but played starting 5th string? No, E/B means B in the bass. Standard E/B: 7th fret [7, 7, 9, 9, 9, 7]? Open E/B is [X, 2, 2, 1, 0, 0] where 5th string (B) is bass. 
+        // Let's adjust E/B (open: X, 2, 2, 1, 0, 0) - root is E on 4th string fret 2
+        { suffix: "/5", quality: "Maior/Baixo na 5ª", name: "Formato E/B (Aberto)", rootStr: 2, frets: ["X", 0, 0, -1, -2, -2] },
+        { suffix: "/5", quality: "Maior/Baixo na 5ª", name: "Formato C/G", rootStr: 1, frets: [0, 0, -1, -3, -2, -3] },
+        
         // Power Chords
-        { suffix: "5", quality: "Power Chord", name: "Raiz na 6ª", rootStr: 5, frets: ["X", "X", "X", 2, 2, 0] },
-        { suffix: "5", quality: "Power Chord", name: "Raiz na 5ª", rootStr: 4, frets: ["X", "X", 2, 2, 0, "X"] },
-        { suffix: "5", quality: "Power Chord", name: "Raiz na 4ª", rootStr: 3, frets: ["X", 3, 2, 0, "X", "X"] },
+        { suffix: "5", quality: "Power Chord", name: "Raiz na 6ª", rootStr: 0, frets: [0, 2, 2, "X", "X", "X"] },
+        { suffix: "5", quality: "Power Chord", name: "Raiz na 5ª", rootStr: 1, frets: ["X", 0, 2, 2, "X", "X"] },
+        { suffix: "5", quality: "Power Chord", name: "Raiz na 4ª", rootStr: 2, frets: ["X", "X", 0, 2, 3, "X"] },
 
         // DOMINANTE (7)
-        { suffix: "7", quality: "Dominante", name: "Formato E", rootStr: 5, frets: [0, 0, 1, 0, 2, 0] },
-        { suffix: "7", quality: "Dominante", name: "Formato A", rootStr: 4, frets: [0, 2, 0, 2, 0, "X"] },
-        { suffix: "7", quality: "Dominante", name: "Formato C", rootStr: 4, frets: ["X", -2, -2, -1, 0, "X"] },
-        { suffix: "7", quality: "Dominante", name: "Formato D", rootStr: 3, frets: [2, 1, 2, 0, "X", "X"] },
+        { suffix: "7", quality: "Dominante", name: "Formato E7", rootStr: 0, frets: [0, 2, 0, 1, 0, 0] },
+        { suffix: "7", quality: "Dominante", name: "Formato A7", rootStr: 1, frets: ["X", 0, 2, 0, 2, 0] },
+        { suffix: "7", quality: "Dominante", name: "Formato C7", rootStr: 1, frets: ["X", 0, -1, 0, -2, "X"] },
+        { suffix: "7", quality: "Dominante", name: "Formato D7", rootStr: 2, frets: ["X", "X", 0, 2, 1, 2] },
 
         // MENOR 7 (m7)
-        { suffix: "m7", quality: "Menor com 7ª", name: "Formato E", rootStr: 5, frets: [0, 0, 0, 0, 2, 0] },
-        { suffix: "m7", quality: "Menor com 7ª", name: "Formato A", rootStr: 4, frets: [0, 1, 0, 2, 0, "X"] },
-        { suffix: "m7", quality: "Menor com 7ª", name: "Formato D", rootStr: 3, frets: [1, 1, 2, 0, "X", "X"] },
+        { suffix: "m7", quality: "Menor com 7ª", name: "Formato Em7", rootStr: 0, frets: [0, 2, 0, 0, 0, 0] },
+        { suffix: "m7", quality: "Menor com 7ª", name: "Formato Am7", rootStr: 1, frets: ["X", 0, 2, 0, 1, 0] },
+        { suffix: "m7", quality: "Menor com 7ª", name: "Formato Dm7", rootStr: 2, frets: ["X", "X", 0, 2, 1, 1] },
 
         // MAIOR 7 (maj7)
-        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato E", rootStr: 5, frets: ["X", 0, 1, 1, "X", 0] },
-        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato A", rootStr: 4, frets: [0, 2, 1, 2, 0, "X"] },
-        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato C", rootStr: 4, frets: [-3, -3, -3, -1, 0, "X"] }
+        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato Emaj7", rootStr: 0, frets: [0, 2, 1, 1, 0, 0] },
+        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato Amaj7", rootStr: 1, frets: ["X", 0, 2, 1, 2, 0] },
+        { suffix: "maj7", quality: "Maior com 7ª", name: "Formato Cmaj7", rootStr: 1, frets: ["X", 0, -1, -3, 0, -3] }
     ];
 
     function renderChordDictionary() {
@@ -335,17 +347,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("chord-dict-results");
         container.innerHTML = "";
 
+        const dictStrings = ["E", "A", "D", "G", "B", "E"];
+
         movableShapesDB.forEach(shape => {
-            const rootOpenNote = guitarStrings[shape.rootStr];
+            const rootOpenNote = dictStrings[shape.rootStr];
             let rootOffset = -1;
-            // Encontra a nota tônica na corda base (tentando até a 24ª casa para cobrir acordes com posições relativas negativas)
+            // Encontra a nota tônica na corda base
             for (let i = 0; i <= 24; i++) {
                 if (getNote(rootOpenNote, i) === root) {
                     let validOffset = true;
                     shape.frets.forEach(f => {
                         if (f !== "X" && i + f < 0) validOffset = false;
                     });
-                    
+
                     if (validOffset) {
                         rootOffset = i;
                         break;
@@ -356,46 +370,60 @@ document.addEventListener("DOMContentLoaded", () => {
             // Se não encontrou uma posição válida no braço, ignora este shape para esta tônica
             if (rootOffset === -1) return;
 
-            const box = document.createElement("div");
-            box.className = "chord-dict-box";
-            
-            box.innerHTML = `<h4>${root}${shape.suffix}</h4>
-                             <div class="chord-fret-start">${shape.quality}<br/>${rootOffset === 0 ? "Posição Aberta" : "Inicia na Casa " + rootOffset}</div>`;
-
-            // Draw diagram
-            const diagContainer = document.createElement("div");
-            diagContainer.className = "diagram-container";
-
-            const nutControls = document.createElement("div");
-            nutControls.className = "diagram-nut-controls";
-
             // Figure out min/max fret for drawing
             let actualFrets = [];
             shape.frets.forEach(f => {
                 actualFrets.push(f === "X" ? "X" : rootOffset + f);
             });
 
-            // Find lowest fret > 0 to start drawing
-            let startFret = 1;
-            let highestFret = 4;
-            let fretsPlayed = actualFrets.filter(f => f !== "X" && f > 0);
-            if (fretsPlayed.length > 0) {
-                startFret = Math.min(...fretsPlayed);
-                highestFret = Math.max(...fretsPlayed);
-            }
-            if (startFret > 2) {
-                // Not open chords, show standard 4 frets box
-                highestFret = Math.max(startFret + 3, highestFret);
-            } else {
-                startFret = 1;
-                highestFret = Math.max(4, highestFret);
+            let bassNoteStr = "";
+            for (let i = 0; i <= 5; i++) {
+                if (actualFrets[i] !== "X") {
+                    bassNoteStr = getNote(dictStrings[i], actualFrets[i]);
+                    break;
+                }
             }
 
-            // Draw Nut/X/O
-            // Order for display: Low E (index 5) to High E (index 0)
-            for (let i = 5; i >= 0; i--) {
+            let displayTitle = `${root}${shape.suffix}`;
+            if (shape.suffix.startsWith("/")) {
+                displayTitle += ` (${bassNoteStr})`;
+            }
+
+            const box = document.createElement("div");
+            box.className = "chord-dict-box";
+
+            box.innerHTML = `<h4>${displayTitle}</h4>
+                             <div class="chord-fret-start">${shape.quality}<br/>${rootOffset === 0 ? "Posição Aberta" : "Inicia na Casa " + rootOffset}</div>`;
+
+            // Draw diagram
+            const diagContainer = document.createElement("div");
+            diagContainer.className = "diagram-container";
+
+            let lowestFret = 999;
+            let highestFret = -1;
+            actualFrets.forEach(f => {
+                if (f !== "X" && f > 0) {
+                    if (f < lowestFret) lowestFret = f;
+                    if (f > highestFret) highestFret = f;
+                }
+            });
+
+            let startFret = 1;
+            if (highestFret > 4) {
+                startFret = lowestFret;
+            }
+            if (highestFret === -1) highestFret = 4; // All open strings or muted
+
+            const nutControls = document.createElement("div");
+            nutControls.className = "diagram-nut-controls";
+
+            for (let i = 0; i <= 5; i++) {
                 const ctrl = document.createElement("span");
-                if (actualFrets[i] === "X") {
+                if (startFret > 1 && i === 0) {
+                    ctrl.textContent = startFret + "fr";
+                    ctrl.style.fontSize = "0.7rem";
+                    ctrl.style.color = "var(--text-muted)";
+                } else if (actualFrets[i] === "X") {
                     ctrl.className = "muted";
                     ctrl.textContent = "X";
                 } else if (actualFrets[i] === 0) {
@@ -410,19 +438,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const grid = document.createElement("div");
             grid.className = "diagram-grid";
-            
+
             if (startFret > 1) {
-                grid.style.borderTop = "2px solid var(--border)"; // Normal border instead of thick nut
+                grid.style.borderTop = "2px solid var(--border)";
             }
 
-            for (let f = startFret; f <= highestFret; f++) {
+            for (let f = startFret; f <= Math.max(startFret + 3, highestFret); f++) {
                 const fretRow = document.createElement("div");
                 fretRow.className = "diagram-fret";
-                
-                for (let i = 5; i >= 0; i--) {
+
+                for (let i = 0; i <= 5; i++) {
                     const stringCol = document.createElement("div");
                     stringCol.className = "diagram-string";
-                    
+
                     if (actualFrets[i] === f) {
                         const marker = document.createElement("div");
                         marker.className = "diagram-marker";
@@ -435,7 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 grid.appendChild(fretRow);
             }
-            
+
             diagContainer.appendChild(grid);
             box.appendChild(diagContainer);
             container.appendChild(box);
@@ -449,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function identifyChordLogic(selectedNotes) {
         if (selectedNotes.length < 3) return "---";
-        
+
         const chordFormulas = {
             "Maior": [4, 7],
             "Menor (m)": [3, 7],
@@ -462,11 +490,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "Diminuto 7 (dim7)": [3, 6, 9]
         };
 
+        let lowestNote = selectedNotes[0];
         let result = "Desconhecido";
-        
+
         for (let root of selectedNotes) {
             let rootIdx = notes.indexOf(root);
-            
+
             let intervals = [];
             for (let n of selectedNotes) {
                 if (n !== root) {
@@ -475,15 +504,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     intervals.push(diff);
                 }
             }
-            intervals.sort((a,b) => a - b);
-            
+            intervals.sort((a, b) => a - b);
+
             for (let [chordName, formula] of Object.entries(chordFormulas)) {
                 if (intervals.length === formula.length) {
                     let match = true;
-                    for (let i=0; i<formula.length; i++) {
+                    for (let i = 0; i < formula.length; i++) {
                         if (intervals[i] !== formula[i]) match = false;
                     }
                     if (match) {
+                        if (root !== lowestNote) {
+                            return `${root} ${chordName} (${root}/${lowestNote})`;
+                        }
                         return `${root} ${chordName}`;
                     }
                 }
@@ -495,20 +527,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderIdentFretboard() {
         const container = document.getElementById("interactive-fretboard");
         container.innerHTML = "";
-        
-        let activeNotes = [];
 
-        guitarStrings.forEach((stringOpenNote, strIdx) => {
+        let activeNotes = new Array(6).fill(null);
+        const dictStrings = ["E", "A", "D", "G", "B", "E"];
+
+        for (let strIdx = 5; strIdx >= 0; strIdx--) {
+            let stringOpenNote = dictStrings[strIdx];
             const stringDiv = document.createElement("div");
             stringDiv.className = "string";
-            
+
             const nutDiv = document.createElement("div");
             nutDiv.className = "fret";
             nutDiv.style.flex = "0.5";
-            
+
             const ctrl = document.createElement("span");
             ctrl.className = "string-control";
-            
+
             let currentState = identState[strIdx];
             if (currentState === "X") {
                 ctrl.classList.add("muted");
@@ -516,48 +550,49 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (currentState === 0) {
                 ctrl.classList.add("open");
                 ctrl.textContent = "O";
-                activeNotes.push(stringOpenNote);
+                activeNotes[strIdx] = stringOpenNote;
             } else {
                 ctrl.textContent = "-";
             }
-            
+
             ctrl.addEventListener("click", () => {
                 if (identState[strIdx] === "X") identState[strIdx] = 0;
                 else if (identState[strIdx] === 0) identState[strIdx] = "X";
                 else identState[strIdx] = "X";
                 updateIdentState();
             });
-            
+
             nutDiv.appendChild(ctrl);
             stringDiv.appendChild(nutDiv);
-            
+
             for (let fret = 1; fret <= numFrets; fret++) {
                 const fretDiv = document.createElement("div");
                 fretDiv.className = "fret";
-                
+
                 let noteAtFret = getNote(stringOpenNote, fret);
-                
+
                 if (currentState === fret) {
                     const marker = document.createElement("div");
                     marker.className = "fret-marker selected";
                     marker.style.backgroundColor = "var(--success)";
                     marker.textContent = noteAtFret;
                     fretDiv.appendChild(marker);
-                    activeNotes.push(noteAtFret);
+                    activeNotes[strIdx] = noteAtFret;
                 }
-                
+
                 fretDiv.addEventListener("click", () => {
                     identState[strIdx] = fret;
                     updateIdentState();
                 });
-                
+
                 stringDiv.appendChild(fretDiv);
             }
             container.appendChild(stringDiv);
-        });
-        
-        let uniqueNotes = [...new Set(activeNotes)];
-        
+        }
+
+        let validNotes = activeNotes.filter(n => n !== null);
+        let uniqueNotes = [...new Set(validNotes)];
+
         document.getElementById("identified-notes-list").textContent = uniqueNotes.length > 0 ? "Notas: " + uniqueNotes.join(", ") : "Selecione notas no braço abaixo";
         document.getElementById("identified-chord-name").textContent = identifyChordLogic(uniqueNotes);
     }
