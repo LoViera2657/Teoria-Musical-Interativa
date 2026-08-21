@@ -3,11 +3,27 @@
  */
 
 // Memory state for progress
+let savedProgress = {};
+try {
+    const saved = localStorage.getItem("harmoniaAppProgress");
+    if (saved) savedProgress = JSON.parse(saved);
+} catch(e) {
+    console.error("Could not load progress", e);
+}
+
 const academyState = {
-    progress: {}, // { "module_id": { "lesson_id": true } }
+    progress: savedProgress, // { "module_id": { "lesson_id": true } }
     currentModule: null,
     currentLesson: null
 };
+
+function saveProgress() {
+    try {
+        localStorage.setItem("harmoniaAppProgress", JSON.stringify(academyState.progress));
+    } catch(e) {
+        console.error("Could not save progress", e);
+    }
+}
 
 const academyModules = [
     {
@@ -489,6 +505,7 @@ window.openLesson = function(lessonId) {
         // Mark progress
         if(!academyState.progress[mod.id]) academyState.progress[mod.id] = {};
         academyState.progress[mod.id][lesson.id] = true;
+        saveProgress();
         
         if(hasNext) {
             openLesson(mod.lessons[lessonIndex + 1].id);
