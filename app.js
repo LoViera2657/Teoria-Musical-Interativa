@@ -77,7 +77,96 @@ function generateHarmonicField(root, type) {
     return field;
 }
 
+// --- AUDIO ENGINE ---
+let audioCtx = null;
+
+function playFrequency(freq) {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    osc.type = 'triangle'; // Closer to string pluck than sine
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+    // Simple ADSR envelope for string pluck effect
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.125, audioCtx.currentTime + 0.02); // attack (lower volume)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5); // decay
+
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1.5);
+}
+
+function playNote(stringIdx, fret) {
+    // Standard tuning frequencies from High E (row 0) to Low E (row 5)
+    const baseFrequencies = [329.63, 246.94, 196.00, 146.83, 110.00, 82.41];
+    const freq = baseFrequencies[stringIdx] * Math.pow(2, fret / 12);
+    playFrequency(freq);
+}
+
+function playAbstractScale(scaleNotes, speedMs = 500, onNotePlay = null, onComplete = null) {
+    let delay = 0;
+    let currentOctave = 3;
+    let lastNoteIndex = -1;
+    
+    scaleNotes.forEach((noteName, idx) => {
+        let cleanNoteName = noteName;
+        // Se houver opções alternativas de enarmonia, tente a primeira (ex: C#/Db -> C#)
+        if (cleanNoteName.includes("/")) cleanNoteName = cleanNoteName.split("/")[0];
+        
+        let noteIndex = notes.indexOf(cleanNoteName);
+        if (noteIndex === -1) {
+            // Em caso de erro com bemóis que não estão no array 'notes' (que usa sustenidos)
+            // Tenta forçar a conversão ou ignora
+            noteIndex = 0; // Fallback
+        }
+
+        if (noteIndex < lastNoteIndex) {
+            currentOctave++; // cruzou o Dó, subiu de oitava
+        }
+        lastNoteIndex = noteIndex;
+        
+        // C3 é ~130.81Hz
+        let c3Freq = 130.81;
+        let freq = c3Freq * Math.pow(2, noteIndex / 12) * Math.pow(2, currentOctave - 3);
+        
+        setTimeout(() => {
+            playFrequency(freq);
+            if (onNotePlay) onNotePlay(noteName, idx);
+        }, delay);
+        
+        delay += speedMs;
+    });
+    
+    if (onComplete) {
+        setTimeout(onComplete, delay);
+    }
+}
+
 // --- UI INTERACTION ---
+
+let playbackTimeouts = [];
+
+function stopPlayback() {
+    playbackTimeouts.forEach(id => clearTimeout(id));
+    playbackTimeouts = [];
+    
+    document.querySelectorAll(".playing-note").forEach(el => el.classList.remove("playing-note"));
+    
+    const playBtn = document.getElementById("btn-play-shape");
+    const stopBtn = document.getElementById("btn-stop-shape");
+    if (playBtn) playBtn.style.display = "inline-block";
+    if (stopBtn) stopBtn.style.display = "none";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -86,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sections = document.querySelectorAll(".section");
 
     navLinks.forEach(link => {
-        link.addEventListener("click", () => {
+        const handleClick = () => {
             // Remove active class from all
             navLinks.forEach(nav => nav.classList.remove("active"));
             sections.forEach(sec => sec.classList.remove("active"));
@@ -95,6 +184,16 @@ document.addEventListener("DOMContentLoaded", () => {
             link.classList.add("active");
             const targetId = link.getAttribute("data-target");
             document.getElementById(targetId).classList.add("active");
+        };
+
+        link.addEventListener("click", handleClick);
+        
+        // Keyboard accessibility
+        link.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleClick();
+            }
         });
     });
 
@@ -110,14 +209,33 @@ document.addEventListener("DOMContentLoaded", () => {
     function createNoteSelector(containerId, stateKey, callback) {
         const container = document.getElementById(containerId);
         if (!container) return;
+        
+        const flatMap = { "C#": "Db", "D#": "Eb", "F#": "Gb", "G#": "Ab", "A#": "Bb" };
+        
         notes.forEach(note => {
             const btn = document.createElement("button");
             btn.className = "note-btn";
-            if (note === "C") btn.classList.add("active");
-            btn.textContent = note;
+            
+            let displayNote = flatMap[note] ? `${note}/${flatMap[note]}` : note;
+            let ariaLabel = flatMap[note] ? `Nota ${note} ou ${flatMap[note]}` : `Nota ${note}`;
+            
+            btn.setAttribute("aria-label", ariaLabel);
+            
+            if (note === "C") {
+                btn.classList.add("active");
+                btn.setAttribute("aria-pressed", "true");
+            } else {
+                btn.setAttribute("aria-pressed", "false");
+            }
+            
+            btn.textContent = displayNote;
             btn.onclick = () => {
-                container.querySelectorAll('.note-btn').forEach(b => b.classList.remove('active'));
+                container.querySelectorAll('.note-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
                 btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
                 activeState[stateKey] = note;
                 callback();
             };
@@ -142,7 +260,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const title = document.createElement("h4");
             title.textContent = `Escala ${name}`;
-            groupDiv.appendChild(title);
+            
+            const playScaleBtn = document.createElement("button");
+            playScaleBtn.className = "play-scale-btn";
+            playScaleBtn.innerHTML = '🔊 Tocar';
+            playScaleBtn.onclick = () => {
+                const boxes = groupDiv.querySelectorAll(".note-box");
+                playAbstractScale(scaleNotes, 600, (noteName, idx) => {
+                    boxes.forEach(b => b.classList.remove("playing-note"));
+                    if (boxes[idx]) boxes[idx].classList.add("playing-note");
+                }, () => {
+                    boxes.forEach(b => b.classList.remove("playing-note"));
+                });
+            };
+            
+            const headerDiv = document.createElement("div");
+            headerDiv.style.display = "flex";
+            headerDiv.style.justifyContent = "space-between";
+            headerDiv.style.alignItems = "center";
+            headerDiv.appendChild(title);
+            headerDiv.appendChild(playScaleBtn);
+            
+            groupDiv.appendChild(headerDiv);
 
             const notesRow = document.createElement("div");
             notesRow.className = "notes-row";
@@ -261,6 +400,12 @@ document.addEventListener("DOMContentLoaded", () => {
         let chordRootIdx = (rootIdx + semitonesFromRoot + 12) % 12;
         let chordRootNote = notes[chordRootIdx];
         
+        // Convert to flat if the numeral asks for a flat (e.g. bVII -> Bb instead of A#)
+        const flatMap = { "C#": "Db", "D#": "Eb", "F#": "Gb", "G#": "Ab", "A#": "Bb" };
+        if (hasFlat && chordRootNote.includes("#")) {
+            chordRootNote = flatMap[chordRootNote];
+        }
+        
         // Quality
         let quality = "";
         if (isMinor) quality = "m";
@@ -361,10 +506,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderFretboard() {
+        stopPlayback(); // Stop any ongoing playback when re-rendering
+        
         const root = activeState.shape;
         const scaleType = selectShapeScale.value;
 
         const scaleNotes = generateScale(root, formulas[scaleType]);
+        let fretboardNotes = [];
 
         fretboardContainer.innerHTML = "";
         const board = document.createElement("div");
@@ -388,7 +536,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     marker.textContent = noteAtFret;
                     fretDiv.appendChild(marker);
+                    
+                    const baseFrequencies = [329.63, 246.94, 196.00, 146.83, 110.00, 82.41];
+                    const freq = baseFrequencies[rowIdx] * Math.pow(2, fret / 12);
+                    
+                    fretboardNotes.push({
+                        noteName: noteAtFret,
+                        stringIdx: rowIdx,
+                        fret: fret,
+                        freq: freq,
+                        element: marker
+                    });
                 }
+                
+                fretDiv.addEventListener("click", () => {
+                    playNote(rowIdx, fret);
+                });
 
                 stringDiv.appendChild(fretDiv);
             }
@@ -398,6 +561,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
         board.appendChild(createFretMarkersRow());
         fretboardContainer.appendChild(board);
+        
+        // Setup shape player
+        const playBtn = document.getElementById("btn-play-shape");
+        const stopBtn = document.getElementById("btn-stop-shape");
+        const speedInput = document.getElementById("shapes-speed");
+        const speedVal = document.getElementById("shapes-speed-val");
+        
+        if (speedInput && speedVal) {
+            speedInput.oninput = () => {
+                speedVal.textContent = speedInput.value;
+            };
+        }
+        
+        if (stopBtn) {
+            stopBtn.onclick = () => stopPlayback();
+        }
+        
+        if (playBtn) {
+            playBtn.onclick = () => {
+                stopPlayback();
+                
+                playBtn.style.display = "none";
+                if (stopBtn) stopBtn.style.display = "inline-block";
+                
+                const bpm = parseInt(speedInput.value, 10);
+                const delayMs = 60000 / bpm; // quarter note duration in ms
+                
+                // Extract CAGED-like positional shapes based on Low E string
+                let lowENotes = fretboardNotes.filter(n => n.stringIdx === 5);
+                lowENotes.sort((a, b) => a.fret - b.fret);
+                
+                let sequenceToPlay = [];
+                
+                lowENotes.forEach(rootNote => {
+                    let startFret = rootNote.fret;
+                    let minFret = Math.max(0, startFret - 1);
+                    let maxFret = startFret + 3;
+                    
+                    let shapeNotes = fretboardNotes.filter(n => n.fret >= minFret && n.fret <= maxFret);
+                    
+                    // Sort shape notes: String (Low E to High E), then Fret (Low to High)
+                    shapeNotes.sort((a, b) => {
+                        if (a.stringIdx !== b.stringIdx) {
+                            return b.stringIdx - a.stringIdx; // 5 -> 0 (Low E to High E)
+                        }
+                        return a.fret - b.fret; // Ascending frets
+                    });
+                    
+                    sequenceToPlay.push(shapeNotes);
+                });
+                
+                let delay = 0;
+                sequenceToPlay.forEach((shapeNotes, shapeIdx) => {
+                    shapeNotes.forEach((noteData) => {
+                        let tid = setTimeout(() => {
+                            playFrequency(noteData.freq);
+                            fretboardNotes.forEach(n => n.element.classList.remove("playing-note"));
+                            noteData.element.classList.add("playing-note");
+                        }, delay);
+                        playbackTimeouts.push(tid);
+                        delay += delayMs;
+                    });
+                    
+                    // Add an extra pause between shapes to distinguish them
+                    delay += delayMs * 2;
+                });
+                
+                // Cleanup at the end
+                let tidEnd = setTimeout(() => {
+                    fretboardNotes.forEach(n => n.element.classList.remove("playing-note"));
+                    playBtn.style.display = "inline-block";
+                    if (stopBtn) stopBtn.style.display = "none";
+                }, delay);
+                playbackTimeouts.push(tidEnd);
+            };
+        }
     }
 
     // (selectShapeRoot is handled by buttons)
@@ -533,6 +772,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             box.innerHTML = `<h4>${displayTitle}</h4>
                              <div class="chord-fret-start">${shape.quality}<br/>${rootOffset === 0 ? "Posição Aberta" : "Inicia na Casa " + rootOffset}</div>`;
+
+            const playBtn = document.createElement("button");
+            playBtn.className = "play-chord-btn";
+            playBtn.innerHTML = '🔊';
+            playBtn.setAttribute("aria-label", `Ouvir acorde ${displayTitle}`);
+            playBtn.onclick = () => {
+                let delay = 0;
+                for (let i = 0; i <= 5; i++) {
+                    if (actualFrets[i] !== "X") {
+                        setTimeout(() => playNote(5 - i, actualFrets[i]), delay);
+                        delay += 40; // strum effect
+                    }
+                }
+            };
+            box.appendChild(playBtn);
 
             // Draw diagram
             const diagContainer = document.createElement("div");
@@ -698,6 +952,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (identState[strIdx] === "X") identState[strIdx] = 0;
                 else if (identState[strIdx] === 0) identState[strIdx] = "X";
                 else identState[strIdx] = "X";
+                
+                if (identState[strIdx] === 0) {
+                    playNote(5 - strIdx, 0); // Play open string
+                }
+                
                 updateIdentState();
             });
 
@@ -720,6 +979,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 fretDiv.addEventListener("click", () => {
+                    playNote(5 - strIdx, fret);
                     identState[strIdx] = fret;
                     updateIdentState();
                 });
