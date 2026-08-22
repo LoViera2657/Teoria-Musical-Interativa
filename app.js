@@ -338,6 +338,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const guitarStrings = ["E", "B", "G", "D", "A", "E"]; // High E to Low E
     const numFrets = 15; // 0 (nut) to 14
 
+    function createFretMarkersRow() {
+        const row = document.createElement("div");
+        row.className = "markers-row";
+        
+        for (let fret = 0; fret <= numFrets; fret++) {
+            const cell = document.createElement("div");
+            cell.className = "marker-cell";
+            if (fret === 0) {
+                cell.style.flex = "0.5";
+            }
+            
+            if ([5, 9, 15].includes(fret)) {
+                cell.innerHTML = '<div class="inlay-bottom"></div>';
+            } else if ([7, 12].includes(fret)) {
+                cell.innerHTML = '<div class="inlay-bottom"></div><div class="inlay-bottom"></div>';
+            }
+            
+            row.appendChild(cell);
+        }
+        return row;
+    }
+
     function renderFretboard() {
         const root = activeState.shape;
         const scaleType = selectShapeScale.value;
@@ -348,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const board = document.createElement("div");
         board.className = "fretboard";
 
-        guitarStrings.forEach(stringOpenNote => {
+        guitarStrings.forEach((stringOpenNote, rowIdx) => {
             const stringDiv = document.createElement("div");
             stringDiv.className = "string";
 
@@ -374,6 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
             board.appendChild(stringDiv);
         });
 
+        board.appendChild(createFretMarkersRow());
         fretboardContainer.appendChild(board);
     }
 
@@ -645,7 +668,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let activeNotes = new Array(6).fill(null);
         const dictStrings = ["E", "A", "D", "G", "B", "E"];
-
+        
+        let rowIdx = 0;
         for (let strIdx = 5; strIdx >= 0; strIdx--) {
             let stringOpenNote = dictStrings[strIdx];
             const stringDiv = document.createElement("div");
@@ -703,7 +727,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 stringDiv.appendChild(fretDiv);
             }
             container.appendChild(stringDiv);
+            rowIdx++;
         }
+        
+        container.appendChild(createFretMarkersRow());
 
         let validNotes = activeNotes.filter(n => n !== null);
         let uniqueNotes = [...new Set(validNotes)];
